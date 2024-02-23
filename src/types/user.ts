@@ -1,6 +1,6 @@
 export interface User {
-  index: number;
-  key: number;
+  index?: number;
+  key?: number;
   username: string;
   firstName: string;
   lastName: string;

@@ -1,12 +1,22 @@
 import type { User } from '~types';
-import { Table, Checkbox, Tag, Space } from 'antd';
-import { useState } from 'react';
+import { Table, Checkbox, Tag, Space, Flex, Button, Modal } from 'antd';
+import { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
-import { usersState } from '../../atoms';
+import { usersState, countriesState } from '../../atoms';
+import { AddUserForm } from '../AddUserForm';
+import { getCountries } from '../../pages/api/countries';
 
 export default function UsersList() {
   const [usersList, setUsersList] = useRecoilState(usersState);
+  const [, setCountries] = useRecoilState(countriesState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+  useEffect(() => {
+    getCountries().then((response) => {
+      setCountries(response);
+    });
+  }, []);
 
   const columns = [
     {
@@ -39,7 +49,7 @@ export default function UsersList() {
       dataIndex: 'hobbies',
       key: 'hobbies',
       render: (hobbies: string[]) => {
-        return hobbies.map((hobby: string) => (
+        return hobbies?.map((hobby: string) => (
           <Tag color="blue" key={hobby}>
             {hobby.toUpperCase()}
           </Tag>
@@ -52,11 +62,8 @@ export default function UsersList() {
       render: (_: any, record: User) => {
         return (
           <Space size="middle">
-            <p style={{ cursor: 'pointer', color: 'blue' }}>Edit</p>
-            <p
-              style={{ cursor: 'pointer', color: 'blue' }}
-              onClick={() => handleDeleteEntry(record)}
-            >
+            <p className="action-item">Edit</p>
+            <p className="action-item" onClick={() => handleDeleteEntry(record)}>
               Delete
             </p>
           </Space>
@@ -67,15 +74,23 @@ export default function UsersList() {
 
   return (
     <>
-      <p style={{ paddingTop: '20px', paddingBottom: '20px', fontSize: '20px', fontWeight: '600' }}>
-        Users list
-      </p>
+      <Flex justify="space-between" align="center">
+        <p className="label">Users list</p>
+        <Button type="primary" onClick={handleShowModal}>
+          Add new user
+        </Button>
+      </Flex>
+
       <Table
         columns={columns}
         dataSource={usersList}
         pagination={{ pageSize: 5 }}
         loading={isLoading}
       />
+
+      <Modal open={isModalOpen} title="Add new user" footer={null} onCancel={handleCloseModal}>
+        <AddUserForm onAddUser={handleAddUser} />
+      </Modal>
     </>
   );
 
@@ -84,6 +99,24 @@ export default function UsersList() {
     setTimeout(() => {
       const updatedList = usersList.filter((user) => user.key !== entry.key);
       setUsersList(updatedList);
+      setIsLoading(false);
+    }, 1000);
+  }
+
+  function handleShowModal() {
+    setIsModalOpen(true);
+  }
+
+  function handleCloseModal() {
+    setIsModalOpen(false);
+  }
+
+  function handleAddUser(userData: User) {
+    setIsLoading(true);
+    setIsModalOpen(false);
+
+    setTimeout(() => {
+      setUsersList((oldList) => [...oldList, userData]);
       setIsLoading(false);
     }, 1000);
   }

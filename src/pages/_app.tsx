@@ -1,4 +1,5 @@
 import '~components/Layout/Layout.styles.scss';
+import '~components/UsersList/UsersList.styles.scss';
 import '~styles/globals.styles.scss';
 import type { AppProps } from 'next/app';
 import { RecoilRoot } from 'recoil';

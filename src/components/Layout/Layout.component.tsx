@@ -1,5 +1,4 @@
 import { Layout } from 'antd/lib';
-// import './Layout.styles.scss';
 interface Props {
   children: React.ReactNode;
 }
@@ -7,19 +6,9 @@ interface Props {
 export default function PageLayout({ children }: Props) {
   const { Header, Content } = Layout;
   return (
-    <Layout className="layout" style={{ minHeight: '1000px' }}>
-      <Header
-        className="header"
-        style={{
-          position: 'sticky',
-          top: 0,
-          zIndex: 1,
-          width: '100%',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      ></Header>
-      <Content className="content" style={{ padding: '0 48px' }}>
+    <Layout className="layout">
+      <Header className="header"></Header>
+      <Content className="content">
         <div
           style={{
             padding: 24,
