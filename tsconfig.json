@@ -18,7 +18,9 @@
       "~components": ["./components/index.ts"],
       "~styles/*": ["./styles/*"],
       "~types/*": ["./types/*"],
-      "~types": ["./types/index.ts"]
+      "~types": ["./types/index.ts"],
+      "~mocks/*": ["./mocks/*"],
+      "~mocks": ["./mocks/index.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

@@ -1,12 +1,11 @@
 import type { User } from '~types';
 import { Table, Checkbox, Tag, Space } from 'antd';
 import { useState } from 'react';
-interface Props {
-  users: User[];
-}
+import { useRecoilState } from 'recoil';
+import { usersState } from '../../atoms';
 
-export default function UsersList({ users }: Props) {
-  const [usersList, setUsersList] = useState<User[]>(users);
+export default function UsersList() {
+  const [usersList, setUsersList] = useRecoilState(usersState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const columns = [
