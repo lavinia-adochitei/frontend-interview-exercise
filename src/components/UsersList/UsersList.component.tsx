@@ -1,5 +1,5 @@
 import type { User } from '~types';
-import { Table, Checkbox, Tag, Space, Flex, Button, Modal } from 'antd';
+import { Table, Checkbox, Space, Flex, Button, Modal, Form } from 'antd';
 import { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { usersState, countriesState } from '../../atoms';
@@ -11,6 +11,7 @@ export default function UsersList() {
   const [, setCountries] = useRecoilState(countriesState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     getCountries().then((response) => {
@@ -48,13 +49,7 @@ export default function UsersList() {
       title: 'Hobbies',
       dataIndex: 'hobbies',
       key: 'hobbies',
-      render: (hobbies: string[]) => {
-        return hobbies?.map((hobby: string) => (
-          <Tag color="blue" key={hobby}>
-            {hobby.toUpperCase()}
-          </Tag>
-        ));
-      },
+      render: (hobbies: string) => <p style={{ width: '150px' }}>{hobbies}</p>,
     },
     {
       title: 'Action',
@@ -95,7 +90,7 @@ export default function UsersList() {
         onCancel={handleCloseModal}
         width="800px"
       >
-        <AddUserForm onAddUser={handleAddUser} />
+        <AddUserForm onAddUser={handleAddUser} form={form} />
       </Modal>
     </>
   );
@@ -103,7 +98,7 @@ export default function UsersList() {
   function handleDeleteEntry(entry: User) {
     setIsLoading(true);
     setTimeout(() => {
-      const updatedList = usersList.filter((user) => user.key !== entry.key);
+      const updatedList = usersList.filter((user) => user.index !== entry.index);
       setUsersList(updatedList);
       setIsLoading(false);
     }, 1000);
@@ -115,6 +110,7 @@ export default function UsersList() {
 
   function handleCloseModal() {
     setIsModalOpen(false);
+    form.resetFields();
   }
 
   function handleAddUser(userData: User) {
@@ -122,8 +118,16 @@ export default function UsersList() {
     setIsModalOpen(false);
 
     setTimeout(() => {
-      setUsersList((oldList) => [...oldList, userData]);
+      const newUser = {
+        ...userData,
+        index: getNewUserIndex(),
+      };
+      setUsersList((oldList) => [...oldList, newUser]);
       setIsLoading(false);
     }, 1000);
+  }
+
+  function getNewUserIndex() {
+    return usersList.length + 1;
   }
 }

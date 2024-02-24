@@ -13,9 +13,8 @@ export const USERS: User[] = [
     country: 'Romania',
     phone: '+40723456789',
     details: 'some details',
-    hobbies: ['reading', 'playing guitar'],
+    hobbies: 'reading, playing guitar',
     index: 1,
-    key: 1,
   },
   {
     username: 'user2',
@@ -29,9 +28,8 @@ export const USERS: User[] = [
     country: 'Romania',
     phone: '+40723456789',
     details: 'some details',
-    hobbies: ['reading', 'playing guitar'],
+    hobbies: 'reading, playing guitar',
     index: 2,
-    key: 2,
   },
   {
     username: 'user3',
@@ -45,9 +43,8 @@ export const USERS: User[] = [
     country: 'Romania',
     phone: '+40723456789',
     details: 'some details',
-    hobbies: ['reading', 'playing guitar'],
+    hobbies: 'reading, playing guitar',
     index: 3,
-    key: 3,
   },
   {
     username: 'user4',
@@ -61,9 +58,8 @@ export const USERS: User[] = [
     country: 'Romania',
     phone: '+40723456789',
     details: 'some details',
-    hobbies: ['reading', 'playing guitar'],
+    hobbies: 'reading, playing guitar',
     index: 4,
-    key: 4,
   },
   {
     username: 'user5',
@@ -77,9 +73,9 @@ export const USERS: User[] = [
     country: 'Romania',
     phone: '+40723456789',
     details: 'some details',
-    hobbies: ['reading', 'playing guitar'],
+    hobbies:
+      'reading, playing guitar, reading, playing guitar, reading, playing guitar, reading, playing guitar, reading, playing guitar',
     index: 5,
-    key: 5,
   },
   {
     username: 'user6',
@@ -93,8 +89,7 @@ export const USERS: User[] = [
     country: 'Romania',
     phone: '+40723456789',
     details: 'some details',
-    hobbies: ['reading', 'playing guitar'],
+    hobbies: 'reading, playing guitar, reading, playing guitar',
     index: 6,
-    key: 6,
   },
 ];

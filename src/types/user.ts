@@ -1,6 +1,5 @@
 export interface User {
   index?: number;
-  key?: number;
   username: string;
   firstName: string;
   lastName: string;
@@ -12,5 +11,5 @@ export interface User {
   country?: string;
   phone?: string;
   details?: string;
-  hobbies?: string[];
+  hobbies?: string;
 }

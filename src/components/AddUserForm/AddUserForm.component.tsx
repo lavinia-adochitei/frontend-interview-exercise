@@ -1,4 +1,5 @@
 import { Form, Input, Button, Switch, DatePicker, Checkbox, Select, Space } from 'antd';
+import type { FormInstance } from 'antd';
 import dayjs from 'dayjs';
 import { useRecoilState } from 'recoil';
 import { countriesState } from '../../atoms';
@@ -6,10 +7,10 @@ import type { Country, User } from '~types';
 const { TextArea } = Input;
 
 interface Props {
+  form: FormInstance;
   onAddUser: (data: User) => void;
 }
-export default function AddUserForm({ onAddUser }: Props) {
-  const [form] = Form.useForm();
+export default function AddUserForm({ form, onAddUser }: Props) {
   const [countries] = useRecoilState<Country[]>(countriesState);
   const dateFormat = 'YYYY-MM-DD';
 
