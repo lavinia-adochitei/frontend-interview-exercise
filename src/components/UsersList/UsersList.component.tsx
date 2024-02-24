@@ -1,12 +1,13 @@
 import type { User, UserPhone } from '~types';
 import type { Dayjs } from 'dayjs';
+import type { TableColumnsType } from 'antd';
 import { Table, Checkbox, Space, Flex, Button, Modal, Form } from 'antd';
 import { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
+import dayjs from 'dayjs';
 import { usersState, countriesState } from '../../atoms';
 import { UserForm } from '../UserForm';
 import { getCountries } from '../../pages/api/countries';
-import dayjs from 'dayjs';
 
 export default function UsersList() {
   const [usersList, setUsersList] = useRecoilState(usersState);
@@ -23,7 +24,7 @@ export default function UsersList() {
     });
   }, []);
 
-  const columns = [
+  const columns: TableColumnsType<User> = [
     {
       title: 'Index',
       dataIndex: 'index',
@@ -34,24 +35,83 @@ export default function UsersList() {
       title: 'Username',
       dataIndex: 'username',
       key: 'username',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => {
+        if (a.username < b.username) {
+          return -1;
+        }
+        if (a.username > b.username) {
+          return 1;
+        }
+        return 0;
+      },
     },
     {
       title: 'Gender',
       dataIndex: 'gender',
       key: 'gender',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => {
+        if ((a.gender as string) < (b.gender as string)) {
+          return -1;
+        }
+        if ((a.gender as string) > (b.gender as string)) {
+          return 1;
+        }
+        return 0;
+      },
     },
     {
       title: 'Date of birth',
       dataIndex: 'dateOfBirth',
       key: 'dateOfBirth',
       render: (dateOfBirth: Dayjs) => <p>{dayjs(dateOfBirth).format(dateFormat)}</p>,
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => {
+        if (a.dateOfBirth < b.dateOfBirth) {
+          return -1;
+        }
+        if (a.dateOfBirth > b.dateOfBirth) {
+          return 1;
+        }
+        return 0;
+      },
     },
-    { title: 'City', dataIndex: 'city', key: 'city' },
+    {
+      title: 'City',
+      dataIndex: 'city',
+      key: 'city',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => {
+        if ((a.city as string) < (b.city as string)) {
+          return -1;
+        }
+        if ((a.city as string) > (b.city as string)) {
+          return 1;
+        }
+        return 0;
+      },
+    },
     {
       title: 'Newsletter',
       dataIndex: 'newsletter',
       key: 'newsletter',
       render: (isSubscribed: boolean) => <Checkbox disabled defaultChecked={isSubscribed} />,
+    },
+    {
+      title: 'Country',
+      dataIndex: 'country',
+      key: 'country',
+      defaultSortOrder: 'descend',
+      sorter: (a, b) => {
+        if ((a.country as string) < (b.country as string)) {
+          return -1;
+        }
+        if ((a.country as string) > (b.country as string)) {
+          return 1;
+        }
+        return 0;
+      },
     },
     {
       title: 'Phone',
