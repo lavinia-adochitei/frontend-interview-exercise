@@ -8,11 +8,60 @@ const { TextArea } = Input;
 
 interface Props {
   form: FormInstance;
+  userToEdit: User | null;
   onAddUser: (data: User) => void;
+  onEditUser: (data: User) => void;
 }
-export default function AddUserForm({ form, onAddUser }: Props) {
+export default function AddUserForm({ form, userToEdit, onAddUser, onEditUser }: Props) {
   const [countries] = useRecoilState<Country[]>(countriesState);
-  const dateFormat = 'YYYY-MM-DD';
+
+  let formInitialValues: Partial<User> = {
+    username: '',
+    firstName: '',
+    lastName: '',
+    gender: undefined,
+    address: '',
+    city: '',
+    newsletter: undefined,
+    country: '',
+    details: '',
+    phone: '',
+    hobbies: '',
+  };
+
+  if (userToEdit) {
+    const {
+      username,
+      firstName,
+      lastName,
+      gender,
+      dateOfBirth,
+      address,
+      city,
+      newsletter,
+      country,
+      details,
+      phone,
+      hobbies,
+    } = userToEdit;
+
+    formInitialValues = {
+      ...formInitialValues,
+      username,
+      firstName,
+      lastName,
+      gender,
+      dateOfBirth,
+      address,
+      city,
+      newsletter,
+      country,
+      details,
+      phone,
+      hobbies,
+    };
+    form.setFieldsValue(formInitialValues);
+  }
 
   return (
     <Form form={form} labelCol={{ span: 24 }} layout="horizontal" className="add-user-form">
@@ -123,17 +172,17 @@ export default function AddUserForm({ form, onAddUser }: Props) {
         <Form.Item label="Hobbies" name="hobbies" className="form-item">
           <TextArea className="form-input" rows={4} />
         </Form.Item>
-        <Button type="primary" onClick={handleAddUser} className="add-user-button">
-          Add user
+        <Button type="primary" onClick={handleClickButton} className="add-user-button">
+          {userToEdit ? 'Edit user' : 'Add user'}
         </Button>
       </div>
     </Form>
   );
 
-  function handleAddUser() {
+  function handleClickButton() {
     form.validateFields().then(() => {
       const values = form.getFieldsValue();
-      const getGender = (gender: boolean | undefined) => {
+      const getGender = (gender: boolean | undefined | string) => {
         switch (gender) {
           case true:
             return 'F';
@@ -141,16 +190,20 @@ export default function AddUserForm({ form, onAddUser }: Props) {
             return 'M';
           case undefined:
             return '';
+          case 'F':
+            return 'F';
+          case 'M':
+            return 'M';
           default:
             return '';
         }
       };
-      const dataToSave = {
+      let dataToSave: User = {
         username: values.username,
         firstName: values.firstName,
         lastName: values.lastName,
         gender: getGender(values.gender),
-        dateOfBirth: dayjs(values.dateOfBirth).format(dateFormat),
+        dateOfBirth: values.dateOfBirth,
         address: values.address,
         city: values.city,
         newsletter: values.newsletter,
@@ -159,8 +212,18 @@ export default function AddUserForm({ form, onAddUser }: Props) {
         details: values.details,
         hobbies: values.hobbies,
       };
-      onAddUser(dataToSave);
       form.resetFields();
+
+      if (userToEdit) {
+        dataToSave = {
+          ...dataToSave,
+          index: userToEdit.index,
+        };
+        onEditUser(dataToSave);
+        return;
+      }
+
+      onAddUser(dataToSave);
     });
   }
 

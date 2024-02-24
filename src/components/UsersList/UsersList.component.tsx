@@ -5,13 +5,17 @@ import { useRecoilState } from 'recoil';
 import { usersState, countriesState } from '../../atoms';
 import { AddUserForm } from '../AddUserForm';
 import { getCountries } from '../../pages/api/countries';
+import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
 
 export default function UsersList() {
   const [usersList, setUsersList] = useRecoilState(usersState);
   const [, setCountries] = useRecoilState(countriesState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [entryToEdit, setEntryToEdit] = useState<User | null>(null);
   const [form] = Form.useForm();
+  const dateFormat = 'YYYY-MM-DD';
 
   useEffect(() => {
     getCountries().then((response) => {
@@ -36,7 +40,12 @@ export default function UsersList() {
       dataIndex: 'gender',
       key: 'gender',
     },
-    { title: 'Date of birth', dataIndex: 'dateOfBirth', key: 'dateOfBirth' },
+    {
+      title: 'Date of birth',
+      dataIndex: 'dateOfBirth',
+      key: 'dateOfBirth',
+      render: (dateOfBirth: Dayjs) => <p>{dayjs(dateOfBirth).format(dateFormat)}</p>,
+    },
     { title: 'City', dataIndex: 'city', key: 'city' },
     {
       title: 'Newsletter',
@@ -57,7 +66,9 @@ export default function UsersList() {
       render: (_: any, record: User) => {
         return (
           <Space size="middle">
-            <p className="action-item">Edit</p>
+            <p className="action-item" onClick={() => handleClickEdit(record)}>
+              Edit
+            </p>
             <p className="action-item" onClick={() => handleDeleteEntry(record)}>
               Delete
             </p>
@@ -85,12 +96,17 @@ export default function UsersList() {
 
       <Modal
         open={isModalOpen}
-        title="Add new user"
+        title={entryToEdit ? 'Edit user' : 'Add new user'}
         footer={null}
         onCancel={handleCloseModal}
         width="800px"
       >
-        <AddUserForm onAddUser={handleAddUser} form={form} />
+        <AddUserForm
+          onAddUser={handleAddUser}
+          onEditUser={handleEditUser}
+          form={form}
+          userToEdit={entryToEdit}
+        />
       </Modal>
     </>
   );
@@ -102,15 +118,6 @@ export default function UsersList() {
       setUsersList(updatedList);
       setIsLoading(false);
     }, 1000);
-  }
-
-  function handleShowModal() {
-    setIsModalOpen(true);
-  }
-
-  function handleCloseModal() {
-    setIsModalOpen(false);
-    form.resetFields();
   }
 
   function handleAddUser(userData: User) {
@@ -125,6 +132,33 @@ export default function UsersList() {
       setUsersList((oldList) => [...oldList, newUser]);
       setIsLoading(false);
     }, 1000);
+  }
+
+  function handleEditUser(userData: User) {
+    setIsLoading(true);
+    setIsModalOpen(false);
+
+    setTimeout(() => {
+      const updatedUsersList = usersList.map((user: User) =>
+        user.index === userData.index ? userData : user
+      );
+      setUsersList(updatedUsersList);
+      setIsLoading(false);
+    }, 1000);
+  }
+
+  function handleShowModal() {
+    setIsModalOpen(true);
+  }
+
+  function handleCloseModal() {
+    setIsModalOpen(false);
+    form.resetFields();
+  }
+
+  function handleClickEdit(entry: User) {
+    setIsModalOpen(true);
+    setEntryToEdit(entry);
   }
 
   function getNewUserIndex() {

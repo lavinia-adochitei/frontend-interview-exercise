@@ -1,4 +1,5 @@
 import type { User } from '~types';
+import dayjs from 'dayjs';
 
 export const USERS: User[] = [
   {
@@ -6,7 +7,7 @@ export const USERS: User[] = [
     firstName: 'Joe',
     lastName: 'Doe',
     gender: 'F',
-    dateOfBirth: '1997-10-15',
+    dateOfBirth: dayjs('1997-10-15'),
     address: 'Main street',
     city: 'Bucharest',
     newsletter: true,
@@ -21,7 +22,7 @@ export const USERS: User[] = [
     firstName: 'Joe',
     lastName: 'Doe',
     gender: 'F',
-    dateOfBirth: '1997-10-15',
+    dateOfBirth: dayjs('1997-10-15'),
     address: 'Main street',
     city: 'Bucharest',
     newsletter: true,
@@ -36,7 +37,7 @@ export const USERS: User[] = [
     firstName: 'Joe',
     lastName: 'Doe',
     gender: 'F',
-    dateOfBirth: '1997-10-15',
+    dateOfBirth: dayjs('1997-10-15'),
     address: 'Main street',
     city: 'Bucharest',
     newsletter: true,
@@ -51,7 +52,7 @@ export const USERS: User[] = [
     firstName: 'Joe',
     lastName: 'Doe',
     gender: 'F',
-    dateOfBirth: '1997-10-15',
+    dateOfBirth: dayjs('1997-10-15'),
     address: 'Main street',
     city: 'Bucharest',
     newsletter: true,
@@ -66,7 +67,7 @@ export const USERS: User[] = [
     firstName: 'Joe',
     lastName: 'Doe',
     gender: 'F',
-    dateOfBirth: '1997-10-15',
+    dateOfBirth: dayjs('1997-10-15'),
     address: 'Main street',
     city: 'Bucharest',
     newsletter: true,
@@ -82,7 +83,7 @@ export const USERS: User[] = [
     firstName: 'Joe',
     lastName: 'Doe',
     gender: 'F',
-    dateOfBirth: '1997-10-15',
+    dateOfBirth: dayjs('1997-10-15'),
     address: 'Main street',
     city: 'Bucharest',
     newsletter: true,
