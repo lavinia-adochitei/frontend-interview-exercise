@@ -1,5 +1,5 @@
 import { PageLayout } from './Layout';
 import { UsersList } from './UsersList';
-import { AddUserForm } from './AddUserForm';
+import { UserForm } from './UserForm';
 
-export { PageLayout, UsersList, AddUserForm };
+export { PageLayout, UsersList, UserForm };

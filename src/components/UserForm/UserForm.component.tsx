@@ -12,7 +12,7 @@ interface Props {
   onAddUser: (data: User) => void;
   onEditUser: (data: User) => void;
 }
-export default function AddUserForm({ form, userToEdit, onAddUser, onEditUser }: Props) {
+export default function UserForm({ form, userToEdit, onAddUser, onEditUser }: Props) {
   const [countries] = useRecoilState<Country[]>(countriesState);
 
   let formInitialValues: Partial<User> = {
@@ -25,7 +25,10 @@ export default function AddUserForm({ form, userToEdit, onAddUser, onEditUser }:
     newsletter: undefined,
     country: '',
     details: '',
-    phone: '',
+    phone: {
+      countryCode: '',
+      number: '',
+    },
     hobbies: '',
   };
 
@@ -163,10 +166,14 @@ export default function AddUserForm({ form, userToEdit, onAddUser, onEditUser }:
         <Form.Item label="Details" name="details" className="form-item">
           <TextArea className="form-input" rows={4} />
         </Form.Item>
-        <Form.Item label="Phone number" name="phone" className="form-item">
+        <Form.Item label="Phone number" className="form-item">
           <Space.Compact className="form-input">
-            <Input style={{ width: '20%' }} />
-            <Input style={{ width: '80%' }} />
+            <Form.Item noStyle name={['phone', 'countryCode']}>
+              <Select style={{ width: '30%' }} options={getCountryCodeOptions()} />
+            </Form.Item>
+            <Form.Item noStyle name={['phone', 'number']}>
+              <Input style={{ width: '70%' }} />
+            </Form.Item>
           </Space.Compact>
         </Form.Item>
         <Form.Item label="Hobbies" name="hobbies" className="form-item">
@@ -182,22 +189,6 @@ export default function AddUserForm({ form, userToEdit, onAddUser, onEditUser }:
   function handleClickButton() {
     form.validateFields().then(() => {
       const values = form.getFieldsValue();
-      const getGender = (gender: boolean | undefined | string) => {
-        switch (gender) {
-          case true:
-            return 'F';
-          case false:
-            return 'M';
-          case undefined:
-            return '';
-          case 'F':
-            return 'F';
-          case 'M':
-            return 'M';
-          default:
-            return '';
-        }
-      };
       let dataToSave: User = {
         username: values.username,
         firstName: values.firstName,
@@ -238,5 +229,32 @@ export default function AddUserForm({ form, userToEdit, onAddUser, onEditUser }:
       const countryName = country.name.common;
       return { value: countryName, label: countryName };
     });
+  }
+
+  function getCountryCodeOptions() {
+    return countries.map((country) => {
+      const { root, suffixes } = country.idd;
+      return {
+        value: `${root}${suffixes[0]}`,
+        label: `${country.flag} ${root}${suffixes[0]}`,
+      };
+    });
+  }
+
+  function getGender(gender: boolean | undefined | string) {
+    switch (gender) {
+      case true:
+        return 'F';
+      case false:
+        return 'M';
+      case undefined:
+        return '';
+      case 'F':
+        return 'F';
+      case 'M':
+        return 'M';
+      default:
+        return '';
+    }
   }
 }

@@ -1,5 +1,10 @@
 import type { Dayjs } from 'dayjs';
 
+export type UserPhone = {
+  countryCode: string;
+  number: string;
+};
+
 export interface User {
   index?: number;
   username: string;
@@ -11,7 +16,7 @@ export interface User {
   city?: string;
   newsletter?: boolean;
   country?: string;
-  phone?: string;
+  phone?: UserPhone;
   details?: string;
   hobbies?: string;
 }

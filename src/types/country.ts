@@ -7,4 +7,5 @@ export interface Country {
     common: string;
     official: string;
   };
+  flag: string;
 }

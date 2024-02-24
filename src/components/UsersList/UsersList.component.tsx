@@ -1,12 +1,12 @@
-import type { User } from '~types';
+import type { User, UserPhone } from '~types';
+import type { Dayjs } from 'dayjs';
 import { Table, Checkbox, Space, Flex, Button, Modal, Form } from 'antd';
 import { useState, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { usersState, countriesState } from '../../atoms';
-import { AddUserForm } from '../AddUserForm';
+import { UserForm } from '../UserForm';
 import { getCountries } from '../../pages/api/countries';
 import dayjs from 'dayjs';
-import type { Dayjs } from 'dayjs';
 
 export default function UsersList() {
   const [usersList, setUsersList] = useRecoilState(usersState);
@@ -53,7 +53,14 @@ export default function UsersList() {
       key: 'newsletter',
       render: (isSubscribed: boolean) => <Checkbox disabled defaultChecked={isSubscribed} />,
     },
-    { title: 'Phone', dataIndex: 'phone', key: 'phone' },
+    {
+      title: 'Phone',
+      dataIndex: 'phone',
+      key: 'phone',
+      render: (phone: UserPhone) => {
+        return <p>{`${phone.countryCode}${phone.number}`}</p>;
+      },
+    },
     {
       title: 'Hobbies',
       dataIndex: 'hobbies',
@@ -66,10 +73,20 @@ export default function UsersList() {
       render: (_: any, record: User) => {
         return (
           <Space size="middle">
-            <p className="action-item" onClick={() => handleClickEdit(record)}>
+            <p
+              className="action-item"
+              onClick={() => {
+                handleClickEdit(record);
+              }}
+            >
               Edit
             </p>
-            <p className="action-item" onClick={() => handleDeleteEntry(record)}>
+            <p
+              className="action-item"
+              onClick={() => {
+                handleDeleteEntry(record);
+              }}
+            >
               Delete
             </p>
           </Space>
@@ -99,9 +116,9 @@ export default function UsersList() {
         title={entryToEdit ? 'Edit user' : 'Add new user'}
         footer={null}
         onCancel={handleCloseModal}
-        width="800px"
+        width="900px"
       >
-        <AddUserForm
+        <UserForm
           onAddUser={handleAddUser}
           onEditUser={handleEditUser}
           form={form}
@@ -144,6 +161,7 @@ export default function UsersList() {
       );
       setUsersList(updatedUsersList);
       setIsLoading(false);
+      setEntryToEdit(null);
     }, 1000);
   }
 
@@ -154,6 +172,7 @@ export default function UsersList() {
   function handleCloseModal() {
     setIsModalOpen(false);
     form.resetFields();
+    setEntryToEdit(null);
   }
 
   function handleClickEdit(entry: User) {
