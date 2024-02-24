@@ -88,7 +88,13 @@ export default function UsersList() {
         loading={isLoading}
       />
 
-      <Modal open={isModalOpen} title="Add new user" footer={null} onCancel={handleCloseModal}>
+      <Modal
+        open={isModalOpen}
+        title="Add new user"
+        footer={null}
+        onCancel={handleCloseModal}
+        width="800px"
+      >
         <AddUserForm onAddUser={handleAddUser} />
       </Modal>
     </>
