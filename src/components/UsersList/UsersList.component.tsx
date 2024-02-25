@@ -36,30 +36,20 @@ export default function UsersList() {
       dataIndex: 'username',
       key: 'username',
       defaultSortOrder: 'descend',
-      sorter: (a, b) => {
-        if (a.username < b.username) {
-          return -1;
-        }
-        if (a.username > b.username) {
-          return 1;
-        }
-        return 0;
-      },
+      sorter: (a, b) => sort(a.username as string, b.username as string),
     },
     {
       title: 'Gender',
       dataIndex: 'gender',
       key: 'gender',
       defaultSortOrder: 'descend',
-      sorter: (a, b) => {
-        if ((a.gender as string) < (b.gender as string)) {
-          return -1;
-        }
-        if ((a.gender as string) > (b.gender as string)) {
-          return 1;
-        }
-        return 0;
-      },
+      sorter: (a, b) => sort(a.gender as string, b.gender as string),
+      filters: [
+        { text: 'M', value: 'M' },
+        { text: 'F', value: 'F' },
+        { text: 'none', value: '' },
+      ],
+      onFilter: (value, record) => record.gender === value,
     },
     {
       title: 'Date of birth',
@@ -67,30 +57,14 @@ export default function UsersList() {
       key: 'dateOfBirth',
       render: (dateOfBirth: Dayjs) => <p>{dayjs(dateOfBirth).format(dateFormat)}</p>,
       defaultSortOrder: 'descend',
-      sorter: (a, b) => {
-        if (a.dateOfBirth < b.dateOfBirth) {
-          return -1;
-        }
-        if (a.dateOfBirth > b.dateOfBirth) {
-          return 1;
-        }
-        return 0;
-      },
+      sorter: (a, b) => sort(a.dateOfBirth, b.dateOfBirth),
     },
     {
       title: 'City',
       dataIndex: 'city',
       key: 'city',
       defaultSortOrder: 'descend',
-      sorter: (a, b) => {
-        if ((a.city as string) < (b.city as string)) {
-          return -1;
-        }
-        if ((a.city as string) > (b.city as string)) {
-          return 1;
-        }
-        return 0;
-      },
+      sorter: (a, b) => sort(a.city as string, b.city as string),
     },
     {
       title: 'Newsletter',
@@ -103,15 +77,7 @@ export default function UsersList() {
       dataIndex: 'country',
       key: 'country',
       defaultSortOrder: 'descend',
-      sorter: (a, b) => {
-        if ((a.country as string) < (b.country as string)) {
-          return -1;
-        }
-        if ((a.country as string) > (b.country as string)) {
-          return 1;
-        }
-        return 0;
-      },
+      sorter: (a, b) => sort(a.country as string, b.country as string),
     },
     {
       title: 'Phone',
@@ -242,5 +208,15 @@ export default function UsersList() {
 
   function getNewUserIndex() {
     return usersList.length + 1;
+  }
+
+  function sort(a: string | Dayjs, b: string | Dayjs) {
+    if (a < b) {
+      return -1;
+    }
+    if (a > b) {
+      return 1;
+    }
+    return 0;
   }
 }
