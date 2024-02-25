@@ -1,5 +1,5 @@
 import { atom } from 'recoil';
-import { USERS } from '~mocks';
+import { USERS } from './mocks';
 import type { Country } from '~types';
 
 export const usersState = atom({

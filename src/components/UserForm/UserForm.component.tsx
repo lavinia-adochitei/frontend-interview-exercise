@@ -67,7 +67,13 @@ export default function UserForm({ form, userToEdit, onAddUser, onEditUser }: Pr
   }
 
   return (
-    <Form form={form} labelCol={{ span: 24 }} layout="horizontal" className="add-user-form">
+    <Form
+      form={form}
+      labelCol={{ span: 24 }}
+      layout="horizontal"
+      className="add-user-form"
+      data-testid="user-form"
+    >
       <div className="form-column">
         <Form.Item
           label="Username"
@@ -85,7 +91,7 @@ export default function UserForm({ form, userToEdit, onAddUser, onEditUser }: Pr
           validateTrigger="onChange"
           className="form-item"
         >
-          <Input className="form-input" />
+          <Input className="form-input" data-testid="username-input" />
         </Form.Item>
         <Form.Item
           label="First name"
@@ -103,7 +109,7 @@ export default function UserForm({ form, userToEdit, onAddUser, onEditUser }: Pr
           validateTrigger="onChange"
           className="form-item"
         >
-          <Input className="form-input" />
+          <Input className="form-input" data-testid="first-name-input" />
         </Form.Item>
         <Form.Item
           label="Last name"
@@ -121,7 +127,7 @@ export default function UserForm({ form, userToEdit, onAddUser, onEditUser }: Pr
           validateTrigger="onChange"
           className="form-item"
         >
-          <Input className="form-input" />
+          <Input className="form-input" data-testid="last-name-input" />
         </Form.Item>
         <Form.Item
           label="Gender"
@@ -187,35 +193,40 @@ export default function UserForm({ form, userToEdit, onAddUser, onEditUser }: Pr
   );
 
   function handleClickButton() {
-    form.validateFields().then(() => {
-      const values = form.getFieldsValue();
-      let dataToSave: User = {
-        username: values.username,
-        firstName: values.firstName,
-        lastName: values.lastName,
-        gender: getGender(values.gender),
-        dateOfBirth: values.dateOfBirth,
-        address: values.address,
-        city: values.city,
-        newsletter: values.newsletter,
-        country: values.country,
-        phone: values.phone,
-        details: values.details,
-        hobbies: values.hobbies,
-      };
-      form.resetFields();
-
-      if (userToEdit) {
-        dataToSave = {
-          ...dataToSave,
-          index: userToEdit.index,
+    form
+      .validateFields()
+      .then(() => {
+        const values = form.getFieldsValue();
+        let dataToSave: User = {
+          username: values.username,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          gender: getGender(values.gender),
+          dateOfBirth: values.dateOfBirth,
+          address: values.address,
+          city: values.city,
+          newsletter: values.newsletter,
+          country: values.country,
+          phone: values.phone,
+          details: values.details,
+          hobbies: values.hobbies,
         };
-        onEditUser(dataToSave);
-        return;
-      }
+        form.resetFields();
 
-      onAddUser(dataToSave);
-    });
+        if (userToEdit) {
+          dataToSave = {
+            ...dataToSave,
+            index: userToEdit.index,
+          };
+          onEditUser(dataToSave);
+          return;
+        }
+
+        onAddUser(dataToSave);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function getMinDate() {

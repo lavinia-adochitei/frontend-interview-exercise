@@ -26,22 +26,6 @@ export default function UsersList() {
   const [, setSearchedColumn] = useState('');
   const searchInput = useRef<InputRef>(null);
 
-  const handleSearch = (
-    selectedKeys: string[],
-    confirm: FilterDropdownProps['confirm'],
-    dataIndex: DataIndex
-  ) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
-  };
-
-  const handleReset = (clearFilters: () => void, confirm: FilterDropdownProps['confirm']) => {
-    clearFilters();
-    setSearchText('');
-    confirm();
-  };
-
   const getColumnSearchProps = (dataIndex: DataIndex): TableColumnType<User> => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
       <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
@@ -114,7 +98,6 @@ export default function UsersList() {
       title: 'Username',
       dataIndex: 'username',
       key: 'username',
-      defaultSortOrder: 'descend',
       sortDirections: ['descend', 'ascend'],
       sorter: (a, b) => sort(a.username as string, b.username as string),
       ...getColumnSearchProps('username'),
@@ -123,7 +106,7 @@ export default function UsersList() {
       title: 'Gender',
       dataIndex: 'gender',
       key: 'gender',
-      defaultSortOrder: 'descend',
+      sortDirections: ['descend', 'ascend'],
       sorter: (a, b) => sort(a.gender as string, b.gender as string),
       filters: [
         { text: 'M', value: 'M' },
@@ -137,14 +120,14 @@ export default function UsersList() {
       dataIndex: 'dateOfBirth',
       key: 'dateOfBirth',
       render: (dateOfBirth: Dayjs) => <p>{dayjs(dateOfBirth).format(dateFormat)}</p>,
-      defaultSortOrder: 'descend',
+      sortDirections: ['descend', 'ascend'],
       sorter: (a, b) => sort(a.dateOfBirth, b.dateOfBirth),
     },
     {
       title: 'City',
       dataIndex: 'city',
+      sortDirections: ['descend', 'ascend'],
       key: 'city',
-      defaultSortOrder: 'descend',
       sorter: (a, b) => sort(a.city as string, b.city as string),
       ...getColumnSearchProps('city'),
     },
@@ -157,8 +140,8 @@ export default function UsersList() {
     {
       title: 'Country',
       dataIndex: 'country',
+      sortDirections: ['descend', 'ascend'],
       key: 'country',
-      defaultSortOrder: 'descend',
       sorter: (a, b) => sort(a.country as string, b.country as string),
       ...getColumnSearchProps('country'),
     },
@@ -167,7 +150,9 @@ export default function UsersList() {
       dataIndex: 'phone',
       key: 'phone',
       render: (phone: UserPhone) => {
-        return <p>{`${phone.countryCode}${phone.number}`}</p>;
+        const { countryCode, number } = phone;
+        const hasPhoneNumber = countryCode && number;
+        return <p>{hasPhoneNumber ? `${countryCode}${number}` : ''}</p>;
       },
       ...getColumnSearchProps('phone'),
     },
@@ -211,7 +196,7 @@ export default function UsersList() {
       <Flex justify="space-between" align="center">
         <p className="label">Users list</p>
         <Button type="primary" onClick={handleShowModal}>
-          Add new user
+          Add user
         </Button>
       </Flex>
 
@@ -224,7 +209,7 @@ export default function UsersList() {
 
       <Modal
         open={isModalOpen}
-        title={entryToEdit ? 'Edit user' : 'Add new user'}
+        title={entryToEdit ? 'Edit user details' : 'Add new user'}
         footer={null}
         onCancel={handleCloseModal}
         width="900px"
@@ -289,6 +274,22 @@ export default function UsersList() {
   function handleClickEdit(entry: User) {
     setIsModalOpen(true);
     setEntryToEdit(entry);
+  }
+
+  function handleReset(clearFilters: () => void, confirm: FilterDropdownProps['confirm']) {
+    clearFilters();
+    setSearchText('');
+    confirm();
+  }
+
+  function handleSearch(
+    selectedKeys: string[],
+    confirm: FilterDropdownProps['confirm'],
+    dataIndex: DataIndex
+  ) {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
   }
 
   function getNewUserIndex() {
