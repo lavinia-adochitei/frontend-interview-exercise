@@ -1,13 +1,17 @@
 import type { User, UserPhone } from '~types';
 import type { Dayjs } from 'dayjs';
-import type { TableColumnsType } from 'antd';
-import { Table, Checkbox, Space, Flex, Button, Modal, Form } from 'antd';
-import { useState, useEffect } from 'react';
+import type { TableColumnsType, InputRef, TableColumnType } from 'antd';
+import { Table, Checkbox, Space, Flex, Button, Modal, Form, Input } from 'antd';
+import { useState, useEffect, useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import dayjs from 'dayjs';
 import { usersState, countriesState } from '../../atoms';
 import { UserForm } from '../UserForm';
 import { getCountries } from '../../pages/api/countries';
+import type { FilterDropdownProps } from 'antd/lib/table/interface';
+import { SearchOutlined } from '@ant-design/icons';
+
+type DataIndex = keyof User;
 
 export default function UsersList() {
   const [usersList, setUsersList] = useRecoilState(usersState);
@@ -17,6 +21,81 @@ export default function UsersList() {
   const [entryToEdit, setEntryToEdit] = useState<User | null>(null);
   const [form] = Form.useForm();
   const dateFormat = 'YYYY-MM-DD';
+
+  const [, setSearchText] = useState('');
+  const [, setSearchedColumn] = useState('');
+  const searchInput = useRef<InputRef>(null);
+
+  const handleSearch = (
+    selectedKeys: string[],
+    confirm: FilterDropdownProps['confirm'],
+    dataIndex: DataIndex
+  ) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+
+  const handleReset = (clearFilters: () => void, confirm: FilterDropdownProps['confirm']) => {
+    clearFilters();
+    setSearchText('');
+    confirm();
+  };
+
+  const getColumnSearchProps = (dataIndex: DataIndex): TableColumnType<User> => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+      <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+          onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+          style={{ marginBottom: 8, display: 'block' }}
+        />
+        <Space>
+          <Button
+            type="primary"
+            onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => clearFilters && handleReset(clearFilters, confirm)}
+            size="small"
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered: boolean) => (
+      <SearchOutlined style={{ color: filtered ? '#1677ff' : undefined }} />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex]
+        ?.toString()
+        .toLowerCase()
+        .includes((value as string).toLowerCase()) ?? false,
+    onFilterDropdownOpenChange: (visible) => {
+      if (visible) {
+        setTimeout(() => searchInput.current?.select(), 100);
+      }
+    },
+  });
 
   useEffect(() => {
     getCountries().then((response) => {
@@ -36,7 +115,9 @@ export default function UsersList() {
       dataIndex: 'username',
       key: 'username',
       defaultSortOrder: 'descend',
+      sortDirections: ['descend', 'ascend'],
       sorter: (a, b) => sort(a.username as string, b.username as string),
+      ...getColumnSearchProps('username'),
     },
     {
       title: 'Gender',
@@ -47,7 +128,7 @@ export default function UsersList() {
       filters: [
         { text: 'M', value: 'M' },
         { text: 'F', value: 'F' },
-        { text: 'none', value: '' },
+        { text: 'N/A', value: '' },
       ],
       onFilter: (value, record) => record.gender === value,
     },
@@ -65,6 +146,7 @@ export default function UsersList() {
       key: 'city',
       defaultSortOrder: 'descend',
       sorter: (a, b) => sort(a.city as string, b.city as string),
+      ...getColumnSearchProps('city'),
     },
     {
       title: 'Newsletter',
@@ -78,6 +160,7 @@ export default function UsersList() {
       key: 'country',
       defaultSortOrder: 'descend',
       sorter: (a, b) => sort(a.country as string, b.country as string),
+      ...getColumnSearchProps('country'),
     },
     {
       title: 'Phone',
@@ -86,12 +169,14 @@ export default function UsersList() {
       render: (phone: UserPhone) => {
         return <p>{`${phone.countryCode}${phone.number}`}</p>;
       },
+      ...getColumnSearchProps('phone'),
     },
     {
       title: 'Hobbies',
       dataIndex: 'hobbies',
       key: 'hobbies',
       render: (hobbies: string) => <p style={{ width: '150px' }}>{hobbies}</p>,
+      ...getColumnSearchProps('hobbies'),
     },
     {
       title: 'Action',
