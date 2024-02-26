@@ -12,53 +12,51 @@ global.fetch = jest.fn(() =>
   })
 );
 
-const mockCountries = [
-  {
-    name: {
-      common: 'Cyprus',
-      official: 'Republic of Cyprus',
-      nativeName: {
-        ell: {
-          official: 'Δημοκρατία της Κύπρος',
-          common: 'Κύπρος',
-        },
-        tur: {
-          official: 'Kıbrıs Cumhuriyeti',
-          common: 'Kıbrıs',
-        },
-      },
-    },
-    idd: {
-      root: '+3',
-      suffixes: ['57'],
-    },
-    flag: '🇨🇾',
-  },
-  {
-    name: {
-      common: 'Vatican City',
-      official: 'Vatican City State',
-      nativeName: {
-        ita: {
-          official: 'Stato della Città del Vaticano',
-          common: 'Vaticano',
-        },
-        lat: {
-          official: 'Status Civitatis Vaticanæ',
-          common: 'Vaticanæ',
-        },
-      },
-    },
-    idd: {
-      root: '+3',
-      suffixes: ['906698', '79'],
-    },
-    flag: '🇻🇦',
-  },
-];
-
 jest.mock('../../pages/api/countries', () => ({
-  getCountries: jest.fn().mockResolvedValue(mockCountries),
+  getCountries: jest.fn().mockResolvedValue([
+    {
+      name: {
+        common: 'Cyprus',
+        official: 'Republic of Cyprus',
+        nativeName: {
+          ell: {
+            official: 'Δημοκρατία της Κύπρος',
+            common: 'Κύπρος',
+          },
+          tur: {
+            official: 'Kıbrıs Cumhuriyeti',
+            common: 'Kıbrıs',
+          },
+        },
+      },
+      idd: {
+        root: '+3',
+        suffixes: ['57'],
+      },
+      flag: '🇨🇾',
+    },
+    {
+      name: {
+        common: 'Vatican City',
+        official: 'Vatican City State',
+        nativeName: {
+          ita: {
+            official: 'Stato della Città del Vaticano',
+            common: 'Vaticano',
+          },
+          lat: {
+            official: 'Status Civitatis Vaticanæ',
+            common: 'Vaticanæ',
+          },
+        },
+      },
+      idd: {
+        root: '+3',
+        suffixes: ['906698', '79'],
+      },
+      flag: '🇻🇦',
+    },
+  ]),
 }));
 
 describe('UsersList component', () => {

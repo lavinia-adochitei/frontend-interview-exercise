@@ -18,7 +18,6 @@ const mockOnEditUser = jest.fn();
 
 import { Form } from 'antd';
 import { User } from '~types';
-import { wait } from '@testing-library/user-event/utils/misc/wait';
 
 const renderUserForm = (userToEdit: User | null = null) => {
   // @ts-ignore
